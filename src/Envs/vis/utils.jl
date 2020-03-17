@@ -20,7 +20,7 @@ end
 
 function render!(env::AbstractEnv, ctx::RGBCtx)
     drawcanvas!(env, CairoContext(ctx.viewer), ctx.params)
-    ptr = ccall((:cairo_image_surface_get_data, Cairo._jl_libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.viewer.ptr)
+    ptr = ccall((:cairo_image_surface_get_data, Cairo.libcairo), Ptr{UInt32}, (Ptr{Nothing},), ctx.viewer.ptr)
     arr = unsafe_wrap(Array, ptr, (ctx.params.screen_width, ctx.params.screen_height))
     rgb_arr = convert.(Float64, channelview(colorview(RGB{N0f8}, permutedims(reinterpret(RGB24, arr), [2, 1]))))
     return rgb_arr

@@ -1,11 +1,9 @@
 using Flux, Gym
 using Flux.Optimise: Optimiser
-using Flux.Tracker: data
 using Statistics: mean
 using DataStructures: CircularBuffer
 using Distributions: sample
 using Printf
-#using CuArrays
 
 # Load game environment
 env = make("CartPole-v0", :human_pane)
@@ -45,10 +43,10 @@ opt = Optimiser(ADAM(η), InvDecay(η_decay))
 get_ϵ(e) = max(ϵ_MIN, min(ϵ, 1f0 - log10(e * ϵ_DECAY)))
 
 remember(state, action, reward, next_state, done) =
-  push!(memory, (data(state), action, reward, data(next_state), done))
+  push!(memory, (cpu(state), action, reward, cpu(next_state), done))
 
 function action(state, train=true)
-  train && rand() <= get_ϵ(e) && (return Gym.sample(env.action_space))
+  train && rand() <= get_ϵ(e) && (return Gym.sample(env._env.action_space))
   act_values = model(state |> gpu)
   return Flux.onecold(act_values)
 end
@@ -63,10 +61,10 @@ function replay()
   for (iter, (state, action, reward, next_state, done)) in enumerate(minibatch)
     target = reward
     if !done
-      target += γ * maximum(data(model(next_state |> gpu)))
+      target += γ * maximum(cpu(model(next_state |> gpu)))
     end
 
-    target_f = data(model(state |> gpu))
+    target_f = cpu(model(state |> gpu))
     target_f[action] = target
 
     push!(x, state)

@@ -32,7 +32,7 @@ function step!(env::PendulumEnv, u)
     g, m, l, dt = 10f0, 1f0, 1f0, env.dt
 
     v = clamp.(u, -env.max_torque, env.max_torque)
-    env.last_u = Tracker.data(v)[1] # for rendering
+    env.last_u = v[1] # for rendering
 
     costs = angle_normalize.(θ).^2 .+ 1f-1(θ̇ .^2) .+ 1f-3(u.^2)
 

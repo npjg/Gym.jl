@@ -50,13 +50,7 @@ Returns the observational state of the environment. The original state can
 be accessed by `\`env._env.state\``.
 """
 function state(env::EnvWrapper)
-	try
-		return _get_obs(env._env)
-	catch y
-		if isa(y, UndefVarError) || isa(y, MethodError)
-			return env._env.state
-		end
-	end
+	return _get_obs(env._env)
 end
 
 
