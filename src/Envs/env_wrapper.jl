@@ -2,8 +2,6 @@ import Flux.testmode!
 
 abstract type AbstractEnv end
 
-include("vis/utils.jl")
-
 IntOrNothing  = Union{Int,  Nothing}
 RealOrNothing = Union{Real, Nothing}
 
@@ -15,12 +13,11 @@ mutable struct EnvWrapper
 	reward_threshold::RealOrNothing
 	max_episode_steps::IntOrNothing
     _env::AbstractEnv
-    _ctx::AbstractCtx
 end
 
-EnvWrapper(env::AbstractEnv, ctx::AbstractCtx, train::Bool=true;
+EnvWrapper(env::AbstractEnv, train::Bool=true;
 		   reward_threshold=nothing, max_episode_steps=nothing) =
-EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env, ctx)
+EnvWrapper(false, 0, 0, train, reward_threshold, max_episode_steps, env)
 
 function step!(env::EnvWrapper, a)
     s′, r, done, dict = step!(env._env, a)
@@ -39,11 +36,6 @@ function reset!(env::EnvWrapper)
     env.steps = 0
     reset!(env._env)
 end
-
-render!(env::EnvWrapper, ctx::AbstractCtx) = render!(env._env, ctx)
-render!(env::EnvWrapper) = render!(env, env._ctx)
-
-Ctx(env::EnvWrapper, mode::Symbol = :human_window) = Ctx(env._env, mode)
 
 """
 Returns the observational state of the environment. The original state can

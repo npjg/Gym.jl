@@ -22,8 +22,6 @@ mutable struct CartPoleEnv <: AbstractEnv
     steps_beyond_done
 end
 
-include("vis/cartpole.jl")
-
 function CartPoleEnv()
     gravity = 98f-1
     masscart = 1f0

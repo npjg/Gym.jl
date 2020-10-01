@@ -40,15 +40,13 @@ function EnvSpec(id, entry_point; trials=100, reward_threshold=nothing,
             max_episode_steps, max_episode_seconds, kwargs)
 end
 
-function _make(spec::EnvSpec, render_mode::Symbol; kwargs...)
+function _make(spec::EnvSpec; kwargs...)
     _kwargs = deepcopy(spec.kwargs)
     merge!(_kwargs, Dict(kwargs))
 
     env_var = load(spec.entry_point, spec.id)
-    ctx_var = load(spec.entry_point, :Ctx)
     env = Base.invokelatest(env_var)
-    ctx = Base.invokelatest(ctx_var, env, render_mode)
-    env, ctx, spec.reward_threshold, spec.max_episode_steps
+    env, spec.reward_threshold, spec.max_episode_steps
 end
 
 function load(path, id)
@@ -81,7 +79,7 @@ function _make(reg::EnvRegistry, id_string, render_mode::Symbol; kwargs...)
     isnothing(spec) &&
             (throw(ErrorException("Environment $(id_string) not found in the registry. Please ensure that you've spelled the name correctly.")))
 
-    _make(spec, render_mode; kwargs...)
+    _make(spec; kwargs...)
 end
 
 registry = EnvRegistry()
@@ -106,6 +104,6 @@ Optional keyword arguments:
 include("env_wrapper.jl")
 
 function make(id_string, mode=:human_pane, train=true; kwargs...)
-	env, ctx, rt, max_ep_steps = _make(registry, id_string, mode; kwargs...)
-	EnvWrapper(env, ctx, train; reward_threshold=rt, max_episode_steps=max_ep_steps)
+	env, rt, max_ep_steps = _make(registry, id_string, mode; kwargs...)
+	EnvWrapper(env, train; reward_threshold=rt, max_episode_steps=max_ep_steps)
 end

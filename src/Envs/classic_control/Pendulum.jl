@@ -11,8 +11,6 @@ mutable struct PendulumEnv <: AbstractEnv
     observation_space::Box
 end
 
-include("vis/pendulum.jl")
-
 function PendulumEnv()
     max_speed = 8f0
     max_torque = 2f0

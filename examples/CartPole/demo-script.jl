@@ -9,6 +9,5 @@ while i <= length(actions)
     global i, done
     a, b, done, d = step!(env, actions[i])
 
-    render!(env)
     i += 1
 end
