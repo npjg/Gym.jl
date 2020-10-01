@@ -67,9 +67,6 @@ mutable struct EnvRegistry
 end
 
 function _register(reg::EnvRegistry, id_string, id, entry_point; kwargs...)
-    !isnothing(get(reg.env_specs, id_string, nothing)) &&
-                (throw(ErrorException("Cannot re-register id: $(id_string)")))
-
     reg.env_specs[id_string] = EnvSpec(id, entry_point; kwargs...)
 end
 
