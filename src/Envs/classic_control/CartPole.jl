@@ -114,4 +114,8 @@ function reset!(env::CartPoleEnv)
     return env.state
 end
 
+function _get_obs(env::CartPoleEnv)
+    return env.state
+end
+
 Base.show(io::IO, env::CartPoleEnv) = print(io, "CartPoleEnv")
